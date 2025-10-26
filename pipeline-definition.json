@@ -1,0 +1,52 @@
+{
+  "pipeline": {
+    "name": "SampleCICDPipeline",
+    "roleArn": "<CODEPIPELINE_ROLE_ARN>",
+    "stages": [
+      {
+        "name": "Source",
+        "actions": [
+          {
+            "name": "SourceAction",
+            "actionTypeId": {
+              "category": "Source",
+              "owner": "ThirdParty",
+              "provider": "GitHub",
+              "version": "1"
+            },
+            "outputArtifacts": [{"name": "SourceOutput"}],
+            "configuration": {
+              "Owner": "<GITHUB_OWNER>",
+              "Repo": "<REPO_NAME>",
+              "Branch": "main",
+              "OAuthToken": "<GITHUB_TOKEN>"
+            },
+            "runOrder": 1
+          }
+        ]
+      },
+      {
+        "name": "Build",
+        "actions": [
+          {
+            "name": "BuildAction",
+            "actionTypeId": {
+              "category": "Build",
+              "owner": "AWS",
+              "provider": "CodeBuild",
+              "version": "1"
+            },
+            "inputArtifacts": [{"name": "SourceOutput"}],
+            "outputArtifacts": [{"name": "BuildOutput"}],
+            "configuration": {"ProjectName": "SampleBuildProject"},
+            "runOrder": 1
+          }
+        ]
+      }
+    ],
+    "artifactStore": {
+      "type": "S3",
+      "location": "<S3_BUCKET_FOR_ARTIFACTS>"
+    }
+  }
+}
